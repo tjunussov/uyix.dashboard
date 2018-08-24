@@ -1,0 +1,25 @@
+<template lang="pug">
+.m-5
+  
+</template>
+
+<script>
+import Vue from 'vue'
+
+export default {
+  name: 'Settings',
+  data () {
+    return {
+      hid:null,
+    }
+  },
+  methods:{
+    
+  }
+}
+</script>
+
+<!-- Add "scoped" attribute to limit CSS to this component only -->
+<style  lang="stylus">
+     
+</style>
