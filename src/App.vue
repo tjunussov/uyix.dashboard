@@ -1,54 +1,130 @@
 <template lang="pug">
 doctype html
 
-#app(:class="[status]")
+#app(:class="[status,(fullscreen?'nocursor':'')]")
 
   b-navbar.bd-navbar(toggleable="md" type="dark")
 
     b-nav-toggle(target="nav_collapse")
 
-    b-navbar-brand(@click="showAlert=!showAlert")
-      img(src="static/bilogo.svg" height="36" width="76")
-      //- <svg width="36" height="36" viewBox="0 0 612 612" xmlns="http://www.w3.org/2000/svg" focusable="false" fill="#fff" class="d-block"><path d="M510,8 C561.846401,8.16468012 603.83532,50.1535995 604,102 L604,510 C603.83532,561.846401 561.846401,603.83532 510,604 L102,604 C50.1535995,603.83532 8.16468012,561.846401 8,510 L8,102 C8.16468012,50.1535995 50.1535995,8.16468012 102,8 L510,8 L510,8 Z M510,0 L102,0 C45.9,6.21724894e-15 0,45.9 0,102 L0,510 C0,566.1 45.9,612 102,612 L510,612 C566.1,612 612,566.1 612,510 L612,102 C612,45.9 566.1,6.21724894e-15 510,0 Z" fill-rule="nonzero"></path> <text id="BV" font-family="Arial" font-size="350" font-weight="light" letter-spacing="2"><tspan x="130" y="446">B</tspan> <tspan x="360" y="446">I</tspan></text></svg>
-    b-navbar-brand(@click="toggleFullScreen()") SMART UYI
+    b-navbar-brand(@click="showAlert='с 14:00 по 18:00 будут профилактические работы'")
+      .logo
+    b-navbar-brand(@click="toggleFullScreen()") SMART HOME
 
-    b-navbar-nav.ml-5
-      b-nav-item(to="/") Панель
-      b-nav-item(to="/") Меню
+    b-navbar-nav.ml-2
+      b-nav-form
+        b-button(size="sm" :variant="masterState?'':'danger'" :pressed.sync="masterState") 
+          i.fa.fa-power-off.mr-1/
+          | {{masterState?'Выключить Все':'Снят с охраны'}}
+        b-button.ml-2(size="sm" variant="" @click="opendDoor") 
+          i.fa.fa-key/ 
+          | Домофон
+        
+    //-   b-nav-item(to="/") Панель
+    //-   b-nav-item(to="/") Меню
 
     b-navbar-nav.ml-auto
       //- b-nav-item(v-b-modal.settings) API
+      b-nav-item(@click="isRooms=!isRooms" ) 
+        span(:class="{'text-success':!isRooms,'text-muted':isRooms}") 
+          i.fa.fa-th/
       b-nav-item(v-b-modal.communicate) 
-        span(:class="{'text-primary':ws.isOpen}") Config
-      b-nav-item(to="/homekit") HomeKit
-      b-nav-item(v-b-modal="'settings'").ml-3 КВ 49
+        span(:class="{'text-success':ws.isOpen,'text-muted':!ws.isOpen}") 
+          i.fa.fa-gear/
+      b-nav-item(v-b-modal="'settings'").ml-3 CITY SEOUL ( КВ 51 )
+      b-nav-item(@click="reload")
+        i.fa.fa-user
 
           
-  .mx-3.px-3.pt-3
-    b-card-group.uyi(deck)
-      template(v-for="(dev,group) in devices")
+  .mx-3.px-2.pt-2(:class="{'hideFake':hideFake}")
+    template(v-if="isRooms")
+
+      b-card-group.uyi.rooms.main(deck)
+      
+        b-card(no-body)
+          b-card-body
+            b-row.display.p-2
+              b-col(cols="3")
+                  b-button.mb-2(size="lg" 
+                  :class="{'text-enable':data.groups[home.bell.status[0]] && data.groups[home.bell.status[0]].devices[home.bell.status[1]-1].value}" @click="sendAction(home.bell.value[0],home.bell.value[1]-1,data.groups[home.bell.value[0]].devices[home.bell.value[1]-1])")
+                    | Звонок
+                    i.fa.fa-bell-slash.ml-2(v-if="data.groups[home.bell.value[0]] && data.groups[home.bell.value[0]].devices[home.bell.value[1]-1].value")
+                    i.fa.fa-bell.ml-2(v-else)
+                  b-btn.text-danger(size="lg" v-if="data.groups[home.alarm[0]] && data.groups[home.alarm[0]].devices[home.alarm[1]-1].value" @click="sendAction(home.alarm[0],home.alarm[1]-1,data.groups[home.alarm[0]].devices[home.alarm[1]-1])")
+                    | Сирена
+                    i.fa.fa-bolt.ml-2/
+              b-col(cols="4")
+                  div
+                    small Горячяя-Вода 
+                  div
+                    small Холодная-Вода 
+                  div
+                    small Электросчетчик
+                  div
+                    small Погода
+              b-col(cols="5")
+                  div
+                    span.mr-2 {{home.meters[0] | unwrap(data) | money('hot')}}
+                  div
+                    span.mr-2 {{home.meters[1] | unwrap(data) | money('cold')}}
+                  div
+                    span.mr-2 {{home.meters[2] | unwrap(data) | money('power')}}
+                  div
+                    small.mr-2: i.fa.fa-snowflake-o
+                    span.mr-2 2° 
+                    small Гололед 
+
+
+      b-card-group.uyi.rooms(deck)
+
         b-card(
-          v-for="(value,key) in dev"
-           :key="key"
-           :class="[group,key,value.status,(value.value==1?'enabled':''),(value.value==0||value.value==1?'':'numeric')]"
-           no-body
-           @click="sendAction(group,key)"
-           @mousedown="down(group,key)"
-           @mouseup="up(group,key)"
-           align="center")
-          b-card-header {{(key)}}
-          b-card-body(:data-newvalue="value.value")
-            transition(:name="group=='counters'?'slide-fade':(group=='switch'?'chuh':'blink')" :duration="{ enter: 500}" @leave="leave" @enter="enter" mode="out-in")
-              h4.card-title.meters(v-if="group == 'counters'" :key="value.value")
-                | {{value.value | numeric}} 
-              h4.card-title(v-else :key="value.value") {{value.value | humanizer(group)}}
+
+            v-for="(g,k) in home.rooms"
+             @click="sendAction(g.light.value[0],g.light.value[1]-1,data.groups[g.light.value[0]].devices[g.light.value[1]-1])"
+             :key="k"
+             :class="{'enabled':data.groups[g.light.status[0]] && data.groups[g.light.status[0]].devices[g.light.status[1]-1] && data.groups[g.light.status[0]].devices[g.light.status[1]-1].value,'toggled':data.groups[g.light.value[0]] && data.groups[g.light.value[0]].devices[g.light.value[1]-1].value}"
+             no-body
+             align="center")
+          b-card-header 
+            i.fa.fa-user-secret.mr-1(v-if="g.pir && data.groups[g.pir[0]] && data.groups[g.pir[0]].devices[g.pir[1]-1].value")
+            | {{g.name}}
+          b-card-body
+            .display.pt-3
+              .temp(v-if="g.temp") {{g.temp | unwrap(data) | numeric | adjuster('TEMP',adaptTemp)}}
+              .humidity(v-if="g.humidity") {{g.humidity| unwrap(data)}}
+              .sensors.text-center
+                i.fa.fa-fire.text-danger.mr-1(v-if="g.fire && data.groups[g.fire[0]] && data.groups[g.fire[0]].devices[g.fire[1]-1].value")/
+                i.fa.fa-tint.text-danger.mr-1(v-if="g.leak && data.groups[g.leak[0]] && data.groups[g.leak[0]].devices[g.leak[1]-1].value")/
+                i.fa.fa-ban.text-danger.mr-1(v-if="g.valve && data.groups[g.valve.status[0]] && data.groups[g.valve.status[0]].devices[g.valve.status[1]-1].value")/
+              
+
+    template(v-else)
+      b-card-group.uyi.devices(deck)
+        template(v-for="(bus,s) in data.groups")
+          b-card(
+            v-for="(value,i) in bus.devices"
+             :class="['hub'+s,value.status,value.type,value.subtype,bus.error,(bus.fake||value.fake?'fake':''),(value.value==1?'enabled':''),(value.value==0||value.value==1?'':'numeric')]"
+             :key="s+':'+i"
+             no-body
+             @click="sendAction(s,i,value)"
+             mousedown="down(s,i,value)"
+             mouseup="up(s,i,value)"
+             align="center")
+            b-card-header {{(value.name)}}
+            b-card-body(:data-newvalue="value.value")
+              transition(:name="value.subtype=='METER'?'slide-fade':(value.type=='switch'?'chuh':'blink')" :duration="{ enter: 500}" @leave="leave" @enter="enter" mode="out-in")
+                h4.card-title.meters(v-if="value.subtype == 'METER'" :key="value.value")
+                  | {{value.value | numeric | adjuster(value.type,adaptTemp)}} 
+                h4.card-title(v-else :key="value.value") {{value.value | humanizer(value.type,value.subtype)}}
+
+
 
   //- code {{ws}}
 
-  b-modal#settings(title="BI SERVICE - ALERT" header-text-variant="danger" no-fade hide-footer hide-backdrop)
+  b-modal#settings(v-model="showAlert" title="BI SERVICE - ALERT" header-text-variant="danger" no-fade hide-footer hide-backdrop)
     .text-center
       h4 Внимание! 
-      p Профилактические работы с 9.00 - 14:00
+      p {{showAlertMessage}}
       img(height="200" src="static/maintenace.jpg")
 
   b-modal#communicate(title="Подключение")
@@ -64,7 +140,13 @@ doctype html
         b-form-input(v-model="ws.server")
         b-input-group-append(is-text) 
           span.mr-2 Autoconnect
-          b-form-checkbox(v-model="ws.autoconnect") 
+          b-form-checkbox(v-model="ws.autoconnect")
+    b-form-group(label="Hide Fake" horizontal)
+      b-form-checkbox(v-model="hideFake")
+      b-form-checkbox(v-model="emulateFake")
+    b-form-group(label="Ajust Temp - 4"  horizontal)
+      b-form-checkbox(v-model="adaptTemp")
+
     p.text-danger(v-if="ws.error") {{ws.error}}
     p(v-if="ws.message") {{ws.message}}
     template(slot="modal-footer")
@@ -74,10 +156,10 @@ doctype html
   b-alert.bialert(
       dismissible 
       variant="danger" 
-      :show="showAlert")
-      | BI Service 
-      a.alert-link с 14:00 по 18:00 
-      | будут профилактические работы
+      :show="showDoor != null"
+      @dismissed="showDoor = null")
+      | Домофон 
+      a.alert-link.ml-2 {{showDoor}}
 
 </template>
 
@@ -85,21 +167,179 @@ doctype html
 
 import Vue from 'vue'
 import MockAdapter from 'axios-mock-adapter'
-import AnimatedNumber from '@/components/misc/AnimatedNumber'
+import { WebSocket, Server } from 'mock-socket';
+// import AnimatedNumber from '@/components/misc/AnimatedNumber'
 import axios from 'axios'
 
 
-Vue.filter('humanizer', function (value,param) {
-  if(param == 'sensors'){
+Vue.filter('humanizer', function (value,type,subtype) {
+  if(subtype == 'SENSOR'){
     // return value == 0?'NO':(value == 1?'YES':value)
     return value == 0?'○':(value == 1?'●':value)
-  } else if( param == 'togglers'){
-    return value == 0?'PU':(value == 1?'UP':value)
-  }
-   else {
+  } else if( subtype == 'RELAY'){
+    if(type=='TOGGLE') 
+      return value == 0?'DN':(value == 1?'UP':value)
+    else 
+      return value == 0?'OFF':(value == 1?'ON':value)
+  } else {
     return value == 0?'OFF':(value == 1?'ON':value)
   }
 })
+
+Vue.filter('adjuster', function (value,type,enabled) {
+  if(type == 'TEMP' && enabled){
+    return value - 4;
+  } 
+  return value;
+})
+
+var powerValue = null;
+var powerCnt = 0;
+
+var coldValue = null;
+var coldCnt = 0;
+
+var hotValue = null;
+var hotCnt = 0;
+
+Vue.filter('money', function (value,type) {
+  if(type == 'cold'){
+     if(coldValue != value && coldValue != null){
+      coldCnt++;
+    }
+    coldValue = value;
+    return ((454+coldCnt*10)/1000).toFixed(4) + 'm3 ( '+value*5+'тг)';
+  }
+  if(type == 'hot'){
+    if(hotValue != value && hotValue != null){
+      hotCnt++;
+    }
+    hotValue = value;
+    return ((1095+hotCnt*10)/1000).toFixed(4) + 'm3 ('+value*10+'тг)';
+  } 
+  if(type == 'power'){
+    if(powerValue != value && powerValue != null){
+      powerCnt++;
+    }
+    powerValue = value;
+    return ((15300+powerCnt*1000/3200)/1000).toFixed(4) + ' kW ('+Math.ceil(value*0.1)+'тг)';
+  } 
+  return value
+})
+
+
+
+
+Vue.filter('unwrap', function (value,data) {
+  // on first load groups are empty
+  
+    // console.log(data.groups);
+    if(value instanceof Array){
+      // -1 becaue of registers
+      if(data.groups[value[0]])
+        return data.groups[value[0]].devices[value[1]-1].value;
+      else 
+        return null;
+    }
+    else {
+      if(data.groups[value.value[0]])
+        return data.groups[value.value[0]].devices[value.value[1]-1].value;
+      else 
+        return null
+    }
+})
+
+
+
+var _DATA = {
+  "homeid":"bicityseoul",
+  "date":null,
+  "time":null,
+  "groups":{
+    "1":{
+      "title":"ПЛК",
+      "fake":true,
+      "devices":[
+        /*{"name":"PIR","value":0,"type":"PIR","subtype":"SENSOR"},
+        {"name":"Light","value":0,"type":"SWITCH","subtype":"RELAY"},
+        {"name":"Blink","value":0,"type":"SWITCH","subtype":"RELAY"},*/
+        {"name":"Коридор","value":0,"type":"SWITCH","subtype":"RELAY","fake":true},
+        {"name":"Зал","value":0,"type":"SWITCH","subtype":"RELAY","fake":true},
+        {"name":"Кухня","value":0,"type":"SWITCH","subtype":"RELAY","fake":true},
+        {"name":"Сан-узел","value":0,"type":"SWITCH","subtype":"RELAY","fake":true},
+        {"name":"Кладовая","value":0,"type":"SWITCH","subtype":"RELAY","fake":true},
+        {"name":"Коридор","value":0,"type":"SOCKET","subtype":"RELAY","fake":true},
+        {"name":"Зал1","value":0,"type":"SOCKET","subtype":"RELAY","fake":true},
+        {"name":"Зал2","value":0,"type":"SOCKET","subtype":"RELAY","fake":true},
+        {"name":"Кухня","value":0,"type":"SOCKET","subtype":"RELAY","fake":true},
+        {"name":"Bell","value":0,"type":"TOGGLE","subtype":"RELAY","fake":true},
+        {"name":"Сирена","value":1,"type":"ALARM","subtype":"RELAY","fake":true},
+        {"name":"Bell","value":1,"type":"HALL","subtype":"SENSOR","fake":true},
+        {"name":"Коридор","value":0,"type":"HALL","subtype":"SENSOR","fake":true},
+        {"name":"Зал","value":0,"type":"HALL","subtype":"SENSOR","fake":true},
+        {"name":"Кухня","value":0,"type":"HALL","subtype":"SENSOR","fake":true},
+        {"name":"Сан-узел","value":0,"type":"HALL","subtype":"SENSOR","fake":true},
+        {"name":"Кладовая","value":0,"type":"HALL","subtype":"SENSOR","fake":true},
+        {"name":"Счетчик","value":2,"type":"METER","subtype":"POWER","fake":true}
+      ]
+    },
+    "2":{
+      "fake":true,
+      "title":"Сенсор(Зал)",
+      "devices":[
+        {"name":"PIR","type":"PIR","subtype":"SENSOR","value":0},
+        {"name":"Temp","type":"TEMP","subtype":"METER","value":23},
+        {"name":"Humidity","type":"HUMIDITY","subtype":"METER","value":22},
+        {"name":"Fire","type":"FIRE","subtype":"SENSOR","value":0},
+        {"name":"TV on/off","type":"TV","subtype":"IR","value":0},
+        {"name":"AIR on/off","type":"AIR","subtype":"IR","value":0}
+      ]
+    },
+    "3":{
+      "fake":true,
+      "title":"Сенсор(Кухня)",
+      "devices":[
+        {"name":"PIR","type":"PIR","subtype":"SENSOR","value":0},
+        {"name":"Temp","type":"TEMP","subtype":"METER","value":22},
+        {"name":"Humidity","type":"HUMIDITY","subtype":"METER","value":28},
+        {"name":"Fire","type":"FIRE","subtype":"SENSOR","value":0}
+      ]
+    },
+    "4":{
+      "fake":true,
+      "title":"Сенсор(Санузел)",
+      "devices":[
+        {"name":"PIR","type":"PIR","subtype":"SENSOR","value":1},
+        {"name":"Temp","type":"TEMP","subtype":"METER","value":21},
+        {"name":"Humidity","type":"HUMIDITY","subtype":"METER","value":50}
+      ]
+    },
+    "5":{
+      "fake":true,
+      "title":"Сенсор(Коридор)",
+      "devices":[
+        {"name":"PIR","type":"PIR","subtype":"SENSOR","value":1},
+        {"name":"Temp","type":"TEMP","subtype":"METER","value":10},
+        {"name":"Humidity","type":"HUMIDITY","subtype":"METER","value":40}
+      ]
+    },
+    "6":{
+      "fake":true,
+      "title":"HUB(Санузел)",
+      "devices":[
+        {"name":"Задвижка","type":"VALVE","subtype":"RELAY","value":0},
+        {"name":"Счетчик гор","type":"WATER COLD","subtype":"METER","value":3},
+        {"name":"Счетчик хол","type":"WATER HOT","subtype":"METER","value":2},
+        {"name":"Протечка Кухня","type":"LEAK","subtype":"SENSOR","value":0},
+        {"name":"Протечка Санузел","type":"LEAK","subtype":"SENSOR","value":0},
+        {"name":"Status Valve","type":"VALVE","subtype":"SENSOR","value":0}
+      ]
+    }
+  },
+};
+
+
+
 
 const audioFolder = 'static/audio/'
 
@@ -115,7 +355,7 @@ var sounds = {
 }
 
 var socket;
-var baseURL = localStorage.getItem('http')||'http://192.168.0.11';
+var baseURL = localStorage.getItem('http')||'http://192.168.1.50:3000';
 var $mock;
 var $http = axios.create({
   baseURL: baseURL
@@ -127,8 +367,16 @@ export default {
   data(){
     return {
       user : 'ЗЕЛЕННЫЙ КВАРТАЛ',
+      isRooms:true,
       dismissCountDown: 10,
+      showDoor:null,
       showAlert:false,
+      showAlertMessage:null,
+      fullscreen:false,
+      hideFake:false,
+      emulateFake:true,
+      masterState:true,
+      adaptTemp:false,
       tm:null,
       errortm:null,
       value:null,
@@ -139,11 +387,67 @@ export default {
         message: null,
         disableDemo:localStorage.getItem('disableDemo')=== 'true'||false,
         autoconnect:localStorage.getItem('autoconnect') === 'true'||false,
-        server: localStorage.getItem('ws')||'ws://192.168.0.11:81',
+        server: localStorage.getItem('ws')||'ws://192.168.1.50:3000',
         http:baseURL
       },
-      message:[0,0,0,0,0,0,30,25,21,255,125,0,0,0,0,0],
-      devices:{
+      data:{
+        "homeid":"bicityseoul",
+        "date":null,
+        "time":null,
+        "groups":{}
+      },
+      home:{
+        // bell:{value:[1,10],status:[1,12]},
+        // alarm:[1,11],
+        alarm:[1,7],
+        bell:{value:[1,8],status:[1,12]},
+        meters:[
+          {name:"Хол-Вода",value:[6,2]},
+          {name:"Гор-Вода",value:[6,3]},
+          {name:"Свет",value:[1,18]}
+        ],
+        rooms:{
+          HALLAWAY:{
+            name:"Прихожая",
+            light:{value:[1,1],status:[1,13]},
+            pir:[4,1],
+            temp:[4,2],
+            humidity:[4,3]
+          },
+          KITCHEN:{
+            name:"Кухня",
+            light:{value:[1,3],status:[1,15]},
+            pir:[2,1],
+            temp:[2,2],
+            humidity:[2,3],
+            fire:[2,4],
+            tv:[2,5],
+            air:[2,6],
+            leak:[6,4]
+          },
+          HALL:{
+            name:"Зал",
+            light:{value:[1,2],status:[1,14]},
+            pir:[3,1],
+            temp:[3,2],
+            humidity:[3,3]
+          },
+          BATHROOM:{
+            name:"Сан-узел",
+            light:{value:[1,4],status:[1,16]},
+            pir:[5,1],
+            temp:[5,2],
+            humidity:[5,3],
+            leak:[6,5],
+            valve:{value:[6,1],status:[6,6]}
+          },
+          WARDROBE:{
+            name:"Кладовая",
+            light:{value:[1,5],status:[1,17]}
+          }
+        }
+      }
+      /*devices:{
         sensors:{
           "PIR":{value:0,status:null},
           "DOOR":{value:0,status:null},
@@ -170,21 +474,24 @@ export default {
         togglers:{
           "BELL":{value:0,status:null},
         }
-      }
+      }*/
     }
   },
   created(){
-    if(this.autoconnect) this.toggleConnect();
+    this.demo();
+    console.log('created',this.ws.autoconnect)
+    if(this.ws.autoconnect) this.toggleConnect();
     // $http = axios.create({ baseURL: this.ws.http })
-    if(!this.ws.disableDemo) this.demo();
+    // if(!this.ws.disableDemo) 
+
   },
   watch:{
     'ws.server'(val){
       localStorage.setItem('ws',val)
     },
     'ws.http'(val){
-      $http.setBaseURL(val);
       localStorage.setItem('http',val)
+      $http.setBaseUrl(val);
     },
     'ws.disableDemo'(val){
       localStorage.setItem('disableDemo',val)
@@ -195,30 +502,41 @@ export default {
         window.clearInterval(this.demoInt);
       }
     },
+    'emulateFake'(val){
+      $http.get('/fake/'+val).then((resp)=>{
+        console.log('toggleFake',resp.data)
+      });
+    },
+    'masterState'(val){
+      $http.get('/TJ/master/'+val).then((resp)=>{
+        console.log('toggleMaster',resp.data)
+      });
+    },
     'ws.autoconnect'(val){
       localStorage.setItem('autoconnect',val)
     },
-    'devices.sensors.DOOR.value'(val){
-        console.log('sensors->device DOOR->BELL auto',val);
-        this.sendAction('togglers','BELL',val)
-    },
-    'devices.sensors.LEAK.value'(val){
-        console.log('sensors->device LEAK->VALVE auto',val);
-        this.sendAction('switch','VALVE',val);
-    },
-    'devices.sensors.REED.value'(val){
-      console.log('sensors->device REED->ALARM auto',val);
-      this.sendAction('switch','ALARM',val);
-    },
-    message(val){
+    'ws.message'(val){
+      
+
       var cursor = 0;
       sounds.play('update')
-      Object.keys(this.devices).forEach((k1,i)=>{
-        Object.keys(this.devices[k1]).forEach((k2,j)=>{
-          this.devices[k1][k2].value = val[cursor++]
-        });
-      })
       
+      /*Object.keys(this.data.groups).forEach((slave,i)=>{
+        this.data.groups[slave].devices.forEach((k2,j)=>{
+          console.log(k2,j);
+          this.data.groups[slave][j].value = val[cursor++]
+        });
+      })*/
+
+      Object.keys(val).forEach((slave)=>{
+        val[slave].devices.forEach((item,j)=>{
+          // console.log(slave,this.data.groups[slave]);
+          var i = this.data.groups[slave].devices[j]
+          i.value = item.value
+          i.status = item.status
+        });
+      });
+
     }
   },
   computed:{
@@ -227,17 +545,51 @@ export default {
     },
     status(){
       return this.$root.status;
+    },
+    unwrap() {
+      return (value) => {
+        if(this.data.groups[value[0]]){
+          if(value instanceof Array){
+            // -1 becaue of registers
+            if(this.data.groups[value[0]])
+              return this.data.groups[value[0]].devices[value[1]-1].value;
+          }
+          else {
+            if(this.data.groups[value.value[0]])
+              return this.data.groups[value.value[0]].devices[value.value[1]-1].value;
+          }
+        }
+        return '';
+      }
     }
   },
   beforeDestroy(){
     window.clearInterval(this.demoInt);
+    if(this.ws.isOpen) this.toggleConnect();
   },
   methods:{
+    reload(){
+      location.reload();
+    },
+    unwrapZ(value){
+      if(value instanceof Array){
+        // -1 becaue of registers
+        return this.data.groups[value[0]].devices[value[1]-1].value;
+      }
+      else {
+        return this.data.groups[value.value[0]].devices[value.value[1]-1].value;
+      }
+    },
     demo(){
-      $mock = new MockAdapter($http,{delayResponse:1000 }).onAny().reply((cfg)=>{ return [200,'ok'];})
-      this.demoData()
-      window.clearInterval(this.demoInt);
-      this.demoInt = window.setInterval(this.demoData,5000);
+
+      $mock = new MockAdapter($http,{delayResponse:1000 })
+      .onAny().reply((cfg)=>{ return [200,_DATA];})
+
+      //this.demoData()
+
+      // window.clearInterval(this.demoInt);
+      // this.demoInt = window.setInterval(this.demoData,5000);
+
     },
     demoData(){
         // this.devices.counters[Object.keys(this.devices.counters)[Math.ceil(Math.random()*2)]]++;
@@ -247,16 +599,16 @@ export default {
         // this.devices.sensors[name] = Math.floor(Math.random()*1);
 
 
-        var message = this.message.slice(0);
+        var data = this.data.slice(0);
 
         // counter
-        message[(Math.ceil(Math.random()*2)+8)]++;
+        data[(Math.ceil(Math.random()*2)+8)]++;
         // sensors
-        message[Math.floor(Math.random()*4)] = Math.floor(Math.random()*2);
+        data[Math.floor(Math.random()*4)] = Math.floor(Math.random()*2);
         // sensors humidity
-        message[(Math.floor(Math.random()*3)+6)] = Math.ceil(Math.random()*100);
+        data[(Math.floor(Math.random()*3)+6)] = Math.ceil(Math.random()*100);
 
-        this.message = message;
+        this.data = data;
     },
     enter(el){
 
@@ -285,7 +637,8 @@ export default {
           document.documentElement.mozRequestFullScreen();  
         } else if (document.documentElement.webkitRequestFullScreen) {  
           document.documentElement.webkitRequestFullScreen(Element.ALLOW_KEYBOARD_INPUT);  
-        }  
+        } 
+        this.fullscreen = true;
       } else {  
         if (document.cancelFullScreen) {  
           document.cancelFullScreen();  
@@ -293,12 +646,13 @@ export default {
           document.mozCancelFullScreen();  
         } else if (document.webkitCancelFullScreen) {  
           document.webkitCancelFullScreen();  
-        }  
+        } 
+        this.fullscreen = false;
       }  
     },
-    sendAction(group,key,value){
+    sendAction(slave,register,value){
 
-      if((group == 'switch' || group == 'togglers' ) && this.devices[group][key].status == null){
+      /*if((group == 'switch' || group == 'togglers' ) && this.devices[group][key].status == null){
 
         if(value == undefined){
           value = (this.devices[group][key].value == 0?1:0)
@@ -312,7 +666,7 @@ export default {
 
         sounds.play('toggle')
 
-        $http.get(this.ws.http+'/'+key+'/'+value).then(()=>{
+        $http.get(this.ws.http+'/set/'+key+'/'+value).then(()=>{
           this.toggleConfirm(group,key,value);
         }).catch(()=>{
           this.toggleError(group,key,value);
@@ -326,17 +680,38 @@ export default {
       //     },300)
       //   }
 
-       }
+       }*/
+
+
+       var val = (value.value == 1) ? 0 : 1;
+
+       console.log('sendAction',slave,register,value.value+ '->'+ val)
+
+       $http.get(`/TJ01/set/${slave}/${register+1}/${val}`).then(()=>{
+          // this.toggleConfirm(group,key,value);
+          // value.status = null
+        }).catch(()=>{
+          value.status = 'error'
+          // this.toggleError(group,key,value);
+        });
     },
-    down(group,key){
-      console.log('down');
-      if(group == 'sensors')
-        this.devices[group][key].value = true
+    opendDoor(){
+      $http.get('/opendoor').then((resp)=>{
+          console.log(resp);
+          this.showDoor = resp.data;
+        }).catch(()=>{
+        });
     },
-    up(group,key){
+    down(slave,register,value){
+      Vue.set(value,'status','progress');
+      console.log('down',value.status);
+      if(value.type == 'TOGGLE')
+        value.value = true
+    },
+    up(slave,register,value){
       console.log('up');
-      if(group == 'sensors')
-        this.devices[group][key].value = false
+      if(value.type == 'TOGGLE')
+        value.value = false
     },
     toggleConfirm(group,key,value){
       console.log('toggleConfirm');
@@ -358,250 +733,85 @@ export default {
       if(this.ws.isOpen){
         socket.close();
         this.ws.isOpen = false;
-      } else {
         socket = null;
-        socket = new WebSocket(this.ws.server);
-        socket.addEventListener('open', (e) => {
-          console.log('open',e)
-          this.ws.isOpen = true
-          socket.send('start');
-        });
-        socket.addEventListener('error', (e) => {
-          console.log('error',e)
-          this.ws.error = e
-          this.ws.isOpen = false
-        });
-        socket.addEventListener('close', (e) => {
-          console.log('close',e)
-          this.ws.isOpen = false
-        });
-        socket.addEventListener('message', (m) => {
-          console.log('messsage',m)
-          this.ws.message = m.data
-          this.message = JSON.parse(m.data)
+      } else {
+        this.toggleRead().then(()=>{
+          socket = null;
+          socket = new WebSocket(this.ws.server);
+          socket.addEventListener('open', (e) => {
+            this.ws.isOpen = true
+            socket.send('/');
+          });
+          socket.addEventListener('error', (e) => {
+            console.error('error',e)
+            this.ws.error = e
+            this.ws.isOpen = false
+          });
+          socket.addEventListener('close', (e) => {
+            // console.log('close',e)
+            this.ws.isOpen = false
+          });
+          socket.addEventListener('message', (m) => {
+            // console.log('messsage',m)
+            var m = JSON.parse(m.data)
+            if(m.alert){
+              console.log('ALERT',m.alert);
+              this.showAlertMessage = m.alert;
+              this.showAlert = true;
+            } else if(m.master){
+              console.log('MASTER',m.master);
+
+            } else {
+              this.ws.message = m
+            }
+          });
         });
       }
     },
     toggleRead(){
-      if(this.ws.isOpen) {
+      /*if(this.ws.isOpen) {
         this.ws.start = !this.ws.start;
         socket.send(this.ws.start?'start':'stop');
-      }
+      }*/
+      return $http.get('/data.json').then((resp)=>{
+        this.data = resp.data
+      });
     },
   },
   components:{
-    AnimatedNumber
+    // AnimatedNumber
   },
 }
 
 
+const mockServer = new Server("ws://192.168.1.50:3000");
+
+window.WebSocket = WebSocket; // Here we stub out the window object
+  
+mockServer.on('connection', socket => {
+  window.setInterval(()=>{
+    socket.send(JSON.stringify({
+    "2":{
+      "fake":true,
+      "title":"Сенсор(Зал)",
+      "devices":[
+        {"name":"PIR","type":"PIR","subtype":"SENSOR","value":random(0,1)},
+        {"name":"Temp","type":"TEMP","subtype":"METER","value":random(20,30)},
+        {"name":"Humidity","type":"HUMIDITY","subtype":"METER","value":random(1,100)}
+      ]
+    }}));  
+
+  },5000)
+
+
+function random(min,max) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+  
+});
+
+
 </script>
 
-<style lang="stylus">
-
-  html,body
-    background-color #555 !important
-    
-    height 100%
-    width 100%
-    
-  #app
-    // height 100%
-    width 800px
-    height 480px
-    background-color #004996 !important 
-    background-size 125px 175px
-    font-family: 'Roboto', sans-serif;
-    transition all 0.5s  ease-in
-
-
-  body
-    margin 0
-    padding 0
-
-  // Test  
-
-  .bd-navbar
-    min-height 64px
-    min-height 4rem
-    // background-color #0157a5
-    background-color rgba(255,255,255,0.08)
-    -webkit-box-shadow 0 .5rem 1rem rgba(0,0,0,.05),inset 0 -1px 0 rgba(0,0,0,.1)
-    box-shadow 0 .5rem 1rem rgba(0,0,0,.05),inset 0 -1px 0 rgba(0,0,0,.1)
-
-  /**********************/
-
-  #app.inprogress 
-    background-color #0059a6  !important
-    
-    .value
-      animation 0.5s blinkled linear infinite  !important
-
-  #app.ready
-    background-color green !important
-    
-
-  @keyframes blinkled
-    from,to
-      opacity 0
-    50%
-      opacity 1
-
-  .blink
-    animation 1s blink step-end infinite
-          
-  @keyframes blink
-    from,to
-      visibility hidden
-    50%
-      visibility visible
-      
-
-  @keyframes blink1
-    from
-      visibility visible
-    to
-      visibility hidden
-    
-
-</style>
-
-<style lang="stylus">
-
-.bialert 
-  position fixed !important
-  top 10px !important
-  left 8rem !important
-  // margin-left -200px
-  z-index 9999 !important
-  
-  
-.uyi
-  
-  .card
-    color #ccc
-    flex 0 0 auto !important
-    width 7.5rem  !important
-    height 7.5rem !important
-    margin 0.24rem !important
-    background-color transparent !important
-    border-color rgba(255,255,255,0.1) !important
-    cursor pointer
-    opacity 0.5 !important
-    border-radius 0
-    transition  background 0.2s ease-out, color 0.2s ease-out, border-color 0.5s ease-out !important
-    
-
-    // .card-header
-      // background-color rgba()
-      
-    
-    .card-body, .card-header
-      padding 0.5rem 0.2rem  !important
-      overflow hidden !important
-      position relative !important
-      
-
-    .card-header
-      font-weight 700 !important
-      
-    .card-title
-      font-size 4rem !important
-      color rgba(255,255,255,0.2)
-      white-space nowrap
-      padding-right 5px
-      margin 0
-      line-height 3rem
-      letter-spacing -5px
-      
-    &.sensors
-      background-color rgba(255,255,255,0.1) !important
-      opacity 1 !important  
-      
-    &.enabled.progress
-      border-color #be924e !important
-      background-color transparent !important
-      
-    &.enabled
-      background-color #be924e !important
-      opacity 1 !important
-      
-    &.error
-      background-color #f00 !important
-      
-      
-    &.counters, &.sensors
-      border-color rgba(190,146,78,0.7) !important
-      opacity 1 !important
-      
-      .card-title
-        color rgba(190,146,78,1) !important
-        
-    // &.numeric
-    //   .card-title
-
-
-    &.WATER .card-title, &.ELECTRICITY .card-title
-    &.HUMIDITY .card-title, &.TEMP .card-title
-    &.CO2 .card-title
-      font-size 2.5rem !important
-      text-align right !important
-      padding-right 1.5rem
-      letter-spacing -1.5px !important
-      font-weight 300 !important
-      
-
-    
-      
-      
-    &.TEMP .card-title:after
-      content '°'
-      
-    &.ELECTRICITY .card-title:after, &.HALL.METER .card-title:after
-      content 'W'
-      font-size 0.8rem
-      margin-left 0.2rem
-      
-    &.WATER .card-title:after
-      content 'c3'
-      font-size 0.8rem
-      margin-left 0.2rem
-      
-    &.HUMIDITY .card-title:after, &.CO2 .card-title:after
-      content '%'
-      font-size 1.2rem
-      margin-left 0.2rem
-      
-    &.numeric .card-body[data-dir='up'] .card-title:before
-      content '▴'
-      animation blink1 5s 1 step-end forwards
-      margin-left -1.8rem
-      
-    &.numeric .card-body[data-dir='down'] .card-title:before
-      content '▾'
-      color red
-      animation blink1 5s 1 step-end forwards
-      margin-left -1.8rem
-      
-    .card-title:after, .card-title:before
-      position absolute
-
-.slide-fade-enter-active
-  transition all .3s ease
-  color red !important
-  
-.slide-fade-leave-active
-  transition all .8s cubic-bezier(1.0, 0.5, 0.8, 1.0)
-
-.slide-fade-enter
-  transform translateY(-20px)
-  opacity 0
-  
-.slide-fade-leave-to
-  transform translateY(20px)
-  opacity 0
-
-.blink-enter-active
-  animation 0.1s blink step-end infinite
-  
-</style>
+<style lang="stylus" src="./AppStyles.stylus"/>

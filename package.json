@@ -1,18 +1,20 @@
 {
-  "name": "bituyi",
+  "name": "bituyix",
   "version": "1.0.0",
-  "description": "BIT UYI",
+  "description": "BIT UYIX",
   "author": "Timur <tjunussov@bein.tech>",
   "private": true,
   "scripts": {
     "dev": "webpack-dev-server --inline --progress --config build/webpack.dev.conf.js",
     "start": "npm run dev",
+    "push": "cp -r ./build ./docs && git acp",
     "build": "node build/build.js",
     "stats": "webpack --profile --json > stats.json --config build/webpack.prod.conf.js"
   },
   "dependencies": {
     "axios": "^0.18.0",
     "bootstrap-vue": "^2.0.0-rc.6",
+    
     "numeral": "^2.0.6",
     "vue": "^2.5.2",
     "vue-mqtt": "^2.0.2",
@@ -21,6 +23,7 @@
   },
   "devDependencies": {
     "autoprefixer": "^7.1.2",
+    "mock-socket": "^8.0.4",
     "axios-mock-adapter": "^1.15.0",
     "babel-core": "^6.22.1",
     "babel-helper-vue-jsx-merge-props": "^2.0.3",

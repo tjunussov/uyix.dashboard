@@ -1,0 +1,339 @@
+
+  html,body
+    background-color #555 !important
+    
+    height 100%
+    width 100%
+    
+    
+  #app
+    // height 100%
+    width 800px
+    height 480px
+    background-color #004996 !important 
+    background-size 125px 175px
+    font-family: 'RobotoX', sans-serif;
+    transition all 0.5s  ease-in
+    
+    &.nocursor
+      cursor none
+
+  body
+    margin 0
+    padding 0
+
+
+  .logo
+    background-size 350%
+    width 38px
+    height 38px
+
+  // Test  
+
+  .bd-navbar
+    height 3rem
+    // background-color #0157a5
+    background-color rgba(255,255,255,0.08)
+    -webkit-box-shadow 0 .5rem 1rem rgba(0,0,0,.05),inset 0 -1px 0 rgba(0,0,0,.1)
+    box-shadow 0 .5rem 1rem rgba(0,0,0,.05),inset 0 -1px 0 rgba(0,0,0,.1)
+
+  /**********************/
+
+  #app.inprogress 
+    background-color #0059a6  !important
+    
+    .value
+      animation 0.5s blinkled linear infinite  !important
+
+  #app.ready
+    background-color green !important
+    
+
+  @keyframes blinkled
+    from,to
+      opacity 0
+    50%
+      opacity 1
+
+  .blink
+    animation 1s blink step-end infinite
+          
+  @keyframes blink
+    from,to
+      visibility hidden
+    50%
+      visibility visible
+      
+
+  @keyframes blink1
+    from
+      visibility visible
+    to
+      visibility hidden
+      
+  @keyframes bg
+    0%
+      background-size 0 1px,1px 0,0 1px,1px 0
+    25%
+      background-size 100% 1px,1px 0,0 1px,1px 0
+
+    50%
+      background-size 100% 1px,1px 100%,0 1px,1px 0
+
+    75%
+      background-size 100% 1px,1px 100%,100% 1px,1px 0
+
+    100%
+      background-size 100% 1px,1px 100%,100% 1px,1px 100%
+
+.bialert 
+  position fixed !important
+  top 10px !important
+  left 8rem !important
+  // margin-left -200px
+  z-index 9999 !important
+  
+.hideFake .fake 
+  display none
+  outline 1px solid #f00
+  
+.text-enable
+  color #be924e 
+
+
+.uyi
+  
+
+  &.rooms 
+    .card
+      flex 1 0 0% !important
+      width 11rem !important
+      height 11rem !important
+      margin 0.2rem !important
+      opacity 1 !important
+      
+      .card-header
+        font-size 1.5rem !important
+        height 2.8rem !important
+        font-weight 100 !important
+        
+      .card-body
+        padding 0.5em  !important
+      
+      .display
+        font-size 2rem
+        line-height 2.1rem
+        
+      &.toggled
+        outline 1px solid #fbca67 !important
+        
+      .sensors
+        position absolute
+        width 100%
+        bottom 0.5rem
+    
+  h6
+    width: 100%
+    border-bottom 1px solid #be924ecc
+    // padding-left 5px
+    margin-top 0.5rem
+    
+  .group
+    display inline-flex
+    background-color #0001
+    margin-right 1rem
+    
+  
+
+  .card
+    color #ccc
+    flex 0 0 auto !important
+    width 5.2rem !important
+    height 5rem !important
+    margin 0.1rem !important
+    position relative
+    cursor pointer
+    background-color transparent !important
+    border-color rgba(255,255,255,0.1) !important
+    opacity 0.5 !important
+    border-radius 0
+    transition  background 0.2s ease-out, color 0.2s ease-out, border-color 0.5s ease-out !important
+    
+
+    &:hover
+      outline 1px solid #fbca67 !important
+      
+
+    // .card-header
+      // background-color rgba()
+    
+    .card-body, .card-header
+      padding 0.2em 0.2em  !important
+      overflow hidden !important
+      position relative !important
+      
+
+    .card-header
+      font-weight 700 !important
+      font-size 0.8rem
+      white-space nowrap
+      overflow-x hidden
+      text-overflow ellipsis
+      height 1.5rem
+      
+    .card-title
+      font-size 2rem !important
+      color rgba(255,255,255,0.2)
+      white-space nowrap
+      padding-right 5px
+      margin 0
+      line-height 2.5rem
+      letter-spacing -2px
+      
+    &.SENSOR
+      background-color rgba(255,255,255,0.1) !important
+      opacity 1 !important  
+      
+    // &.progress:before
+      // animation-play-state running !important
+    /*  opacity 1 !important
+      // animation 0.2s blink step-end infinite
+      
+      &:after
+        border-bottom-color #fbca67
+        transition width 0.25s ease-out, height 0.25s ease-out 0.25s
+        
+      &:before, &:after
+        width 100%
+        height 100%
+        
+    div*/
+    &.progress:before
+      width 25%
+      box-sizing: inherit;
+      content: '';
+      position: absolute;
+      width 100%
+      height 100%
+      background-repeat no-repeat
+      background-image linear-gradient(to right, #fbca67 100%, #fbca67 100%),
+        linear-gradient(to bottom, #fbca67 100%, #fbca67 100%),
+        linear-gradient(to right, #fbca67 100%, #fbca67 100%),
+        linear-gradient(to bottom, #fbca67 100%, #fbca67 100%)
+      background-size 100% 1px,1px 100%,100% 1px,1px 100%
+      background-position 0 0,100% 0,100% 100%,0 100%
+      animation bg .5s cubic-bezier(0.19, 1, 0.22, 1) 1
+      animation-play-state running
+    
+    /*&:before
+      top 0
+      left 0
+      
+    &:after
+      bottom: 0;
+      right: 0;
+    
+    &:before, &:after
+      border: 1px solid transparent;
+      width: 0;
+      height: 0;
+      box-sizing: inherit;
+      content: '';
+      position: absolute;*/
+          
+    &.enabled
+      background-color #be924e !important
+      opacity 1 !important
+      
+    &.error
+      background-color #f00 !important
+      
+
+    /*&.SENSOR
+      width 4.75rem  !important*/
+      
+      
+    &.METER, &.SENSOR
+      border-color rgba(190,146,78,0.7) !important
+      opacity 1 !important
+      
+      .card-title
+        color rgba(190,146,78,1) !important
+        
+    // &.numeric
+    //   .card-title
+
+
+    &.WATER .card-title, &.METER .card-title
+    &.HUMIDITY .card-title, &.TEMP .card-title
+      font-size 2rem !important
+      text-align right !important
+      padding-right 1.3rem
+      letter-spacing -1.5px !important
+      font-weight 300 !important
+      
+    &.METER.TEMP .card-title:after, .temp:after
+      content '°'
+      font-size 2rem
+      
+    &.METER .card-title:after, .power:after
+      content 'W'
+      font-size 0.8rem
+      margin-left 0.2rem
+      
+    &.WATER.HOT .card-title:after,
+    &.WATER.COLD .card-title:after, .water:after
+
+      content 'm3'
+      font-size 0.8rem
+      margin-left 0.2rem
+      
+    &.HUMIDITY .card-title:after, &.CO2 .card-title:after, .humidity:after
+      content '%'
+      font-size 1.2rem
+      margin-left 0.2rem
+      
+    &.numeric .card-body[data-dir='up'] .card-title:before
+      content '▴'
+      animation blink1 5s 1 step-end forwards
+      margin-left -1.5rem
+      
+    &.numeric .card-body[data-dir='down'] .card-title:before
+      content '▾'
+      color red
+      animation blink1 5s 1 step-end forwards
+      margin-left -1.8rem
+  
+
+    &.hub1:not(.enabled):not(.progress)
+      background-color #a855 !important
+            
+    .card-title:after, .card-title:before
+      position absolute
+      
+    /*&.fake 
+      border-top-color #333 !important
+      border-left-color #333 !important
+      
+      .card-header
+        font-weight 100 !important
+        opacity 0.2 !important*/
+
+.slide-fade-enter-active
+  transition all .3s ease
+  color red !important
+  
+.slide-fade-leave-active
+  transition all .8s cubic-bezier(1.0, 0.5, 0.8, 1.0)
+
+.slide-fade-enter
+  transform translateY(-20px)
+  opacity 0
+  
+.slide-fade-leave-to
+  transform translateY(20px)
+  opacity 0
+
+.blink-enter-active
+  animation 0.1s blink step-end infinite
+  
