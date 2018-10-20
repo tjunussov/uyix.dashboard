@@ -480,7 +480,7 @@ export default {
   created(){
     this.demo();
     console.log('created',this.ws.autoconnect)
-    if(this.ws.autoconnect) this.toggleConnect();
+    if(!this.ws.autoconnect) this.toggleConnect();
     // $http = axios.create({ baseURL: this.ws.http })
     // if(!this.ws.disableDemo) 
 
