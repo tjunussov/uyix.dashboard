@@ -17,6 +17,17 @@
     
     &.nocursor
       cursor none
+      
+    &.demo 
+      .bd-navbar
+        border-top 2px solid rgba(255,164,0,1)
+        
+      .badge
+        position absolute
+        top 5px
+        left 45px
+        font-size 10px
+        background-color rgba(255,164,0,1)
 
   body
     margin 0
@@ -99,6 +110,9 @@
   
 .text-enable
   color #be924e 
+  
+.w100, .w100 small
+  font-weight 100
 
 
 .uyi
@@ -126,6 +140,14 @@
         
       &.toggled
         outline 1px solid #fbca67 !important
+        
+      &[disabled]
+        pointer-events none
+        border-color #555 !important
+        background rgba(0, 56, 133, 0.5) !important
+        
+        .card-header
+          color #555
         
       .sensors
         position absolute

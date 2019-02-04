@@ -1,0 +1,40 @@
+{
+    "coord": {
+        "lon": 71.43,
+        "lat": 51.13
+    },
+    "weather": [{
+        "id": 800,
+        "main": "Clear",
+        "description": "clear sky",
+        "icon": "01d"
+    }],
+    "base": "stations",
+    "main": {
+        "temp": -19,
+        "pressure": 1029,
+        "humidity": 84,
+        "temp_min": -19,
+        "temp_max": -19
+    },
+    "visibility": 10000,
+    "wind": {
+        "speed": 5,
+        "deg": 200
+    },
+    "clouds": {
+        "all": 0
+    },
+    "dt": 1549080000,
+    "sys": {
+        "type": 1,
+        "id": 8820,
+        "message": 0.0035,
+        "country": "KZ",
+        "sunrise": 1549075823,
+        "sunset": 1549109170
+    },
+    "id": 1526273,
+    "name": "Astana",
+    "cod": 200
+}

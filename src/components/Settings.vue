@@ -1,6 +1,6 @@
 <template lang="pug">
 .m-5
-  
+  h5 Settings
 </template>
 
 <script>

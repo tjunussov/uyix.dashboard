@@ -1,7 +1,8 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import Scale from '@/components/Scale'
 import Settings from '@/components/Settings'
+import Home from '@/components/Home'
+import List from '@/components/List'
 
 
 Vue.use(Router)
@@ -9,16 +10,21 @@ Vue.use(Router)
 const router =  new Router({
   routes: [
     {
-      path: '/scale',
-      component: Scale,
-      meta: { isPublic: true }
-    },
-    {
       path: '/settings',
       component: Settings,
       meta: { isPublic: true }
     },
-    // { path: '*', redirect: '/console' }
+    {
+      path: '/home',
+      component: Home,
+      meta: { isPublic: true }
+    },
+    {
+      path: '/list',
+      component: List,
+      meta: { isPublic: true }
+    },
+    { path: '*', redirect: '/home' }
   ],
   linkActiveClass : 'active',
   onError(e){

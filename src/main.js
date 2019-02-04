@@ -4,21 +4,21 @@ import Vue from 'vue'
 import App from './App'
 
 import BootstrapVue from 'bootstrap-vue'
-import AxiosVue from './services/axios'
+import AxiosVue from '@/services/axios'
 
-import router from './router'
+import router from '@/router'
 
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 // import VueNativeSock from 'vue-native-websocket'
 
+import '@/api/mock'
+
 Vue.use(BootstrapVue)
 // Vue.use(ToggleButton)
 Vue.use(AxiosVue)
 
-import '@/components/misc/filters.js'
-import '@/store/api/mock'
-
+import '@/services/filters.js'
 Vue.config.productionTip = false
 
 
@@ -51,8 +51,11 @@ new Vue({
   el: '#app',
   data () {
     return {
-      status:false,
+      fullscreen:false,
       value:0,
+      meta:null,
+      data:null,
+      weather:null
     }
   },
   created(){
@@ -82,6 +85,30 @@ new Vue({
       if(!isNaN(e.detail)) this.value = e.detail
       else console.error('is not a number');
     },
+    toggleFullScreen() {
+      if ((document.fullScreenElement && document.fullScreenElement !== null) ||    
+       (!document.mozFullScreen && !document.webkitIsFullScreen)) {
+        if (document.documentElement.requestFullScreen) {  
+          document.documentElement.requestFullScreen();  
+        } else if (document.documentElement.mozRequestFullScreen) {  
+          document.documentElement.mozRequestFullScreen();  
+        } else if (document.documentElement.webkitRequestFullScreen) {  
+          document.documentElement.webkitRequestFullScreen(Element.ALLOW_KEYBOARD_INPUT);  
+        } 
+        this.fullscreen = true;
+      } else {  
+        if (document.cancelFullScreen) {  
+          document.cancelFullScreen();  
+        } else if (document.mozCancelFullScreen) {  
+          document.mozCancelFullScreen();  
+        } else if (document.webkitCancelFullScreen) {  
+          document.webkitCancelFullScreen();  
+        } 
+        this.fullscreen = false;
+      }  
+    },
   },
   render: h => h(App)
 })
+
+
