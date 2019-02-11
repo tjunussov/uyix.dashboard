@@ -37,6 +37,11 @@ homebridge 2>&1
 - [] git: docs script pack for githubpages 
 - [] git: docs script pack for githubpages
 
+- [] others.turn-off: master off добавить
+- [] hallway.reed добавить
+- [] light1, light2 support добавить
+- [] ir suport ?
+
 ## IMPROVEMENT 
 - [] new dashbaord screen, 3d view
 - [] loading screen
