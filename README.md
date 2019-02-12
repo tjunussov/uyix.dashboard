@@ -18,7 +18,7 @@ homebridge 2>&1
 - [x] demo simulator as mockSocket and mockAxios
 
 ## TODO
-- [O] task: meta.json fallback to static/meta.json
+- [x] task: meta.json fallback to static/meta.json
 - [] task: configurable meta on interace
 - [] task: create vuex store
 - [] task: start connect by default
