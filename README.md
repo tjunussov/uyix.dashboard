@@ -20,30 +20,30 @@ homebridge 2>&1
 ## TODO
 - [ ] task: meta.json fallback to static/meta.json
 - [ ] task: configurable meta on interace
-- [] task: create vuex store
-- [] task: start connect by default
-- [] task: meter filters split value
-- [] task: settings panel ui refactor
-- [] task: icons for leak and valve
-- [] task: light buttons
-- [] task: meters ticks animate
-- [] task: intercom call animate
-- [] task: call history
-- [] task: real weather load
-- [] task: down,up, ui feedback
-- [] task: ngprogress add
-- [] task: screen modes ( ipad screen compatibility )
-- [] task: list view polish ( title, value types, filters )
-- [] git: docs script pack for githubpages 
-- [] git: docs script pack for githubpages
+- [ ] task: create vuex store
+- [ ] task: start connect by default
+- [ ] task: meter filters split value
+- [ ] task: settings panel ui refactor
+- [ ] task: icons for leak and valve
+- [ ] task: light buttons
+- [ ] task: meters ticks animate
+- [ ] task: intercom call animate
+- [ ] task: call history
+- [ ] task: real weather load
+- [ ] task: down,up, ui feedback
+- [ ] task: ngprogress add
+- [ ] task: screen modes ( ipad screen compatibility )
+- [ ] task: list view polish ( title, value types, filters )
+- [ ] git: docs script pack for githubpages 
+- [ ] git: docs script pack for githubpages
 
-- [] others.turn-off: master off добавить
-- [] hallway.reed добавить
-- [] light1, light2 support добавить
-- [] ir suport ?
+- [ ] others.turn-off: master off добавить
+- [ ] hallway.reed добавить
+- [ ] light1, light2 support добавить
+- [ ] ir suport ?
 
 ## IMPROVEMENT 
-- [] new dashbaord screen, 3d view
-- [] loading screen
-- [] fake dahua simulator screen
-- [] task: localStorage as Store plugin
+- [ ] new dashbaord screen, 3d view
+- [ ] loading screen
+- [ ] fake dahua simulator screen
+- [ ] task: localStorage as Store plugin
