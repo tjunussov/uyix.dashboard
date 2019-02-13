@@ -18,6 +18,7 @@ homebridge 2>&1
 - [x] demo simulator as mockSocket and mockAxios
 
 ## TODO
+2019.01.01
 - [ ] task: meta.json fallback to static/meta.json
 - [ ] task: configurable meta on interface
 - [ ] task: create vuex store
@@ -36,6 +37,7 @@ homebridge 2>&1
 - [ ] task: list view polish ( title, value types, filters )
 - [ ] git: docs script pack for githubpages
 
+2019.01.01
 - [x] others.turn-off: master off добавить
 - [x] hallway.reed добавить
 - [x] light1, light2 support добавить
