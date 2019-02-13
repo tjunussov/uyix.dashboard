@@ -19,7 +19,7 @@ homebridge 2>&1
 
 ## TODO
 - [ ] task: meta.json fallback to static/meta.json
-- [ ] task: configurable meta on interace
+- [ ] task: configurable meta on interface
 - [ ] task: create vuex store
 - [ ] task: start connect by default
 - [ ] task: meter filters split value
@@ -34,12 +34,11 @@ homebridge 2>&1
 - [ ] task: ngprogress add
 - [ ] task: screen modes ( ipad screen compatibility )
 - [ ] task: list view polish ( title, value types, filters )
-- [ ] git: docs script pack for githubpages 
 - [ ] git: docs script pack for githubpages
 
-- [ ] others.turn-off: master off добавить
-- [ ] hallway.reed добавить
-- [ ] light1, light2 support добавить
+- [x] others.turn-off: master off добавить
+- [x] hallway.reed добавить
+- [x] light1, light2 support добавить
 - [ ] ir suport ?
 
 ## IMPROVEMENT 
