@@ -11,7 +11,7 @@ var $mock
 
 var $socket = null;
 
-axios.get('/static/data/data.json').then((resp)=>{
+axios.get('static/data/data.json').then((resp)=>{
   data = resp.data;
 })
 
@@ -20,11 +20,11 @@ if(localStorage.getItem('disableDemo') !== 'true'){
   console.log('Enabling Mock Services');
 
   $mock = new MockAdapter($http)
-  .onGet('/data.json').reply((cfg)=>{
+  .onGet('data.json').reply((cfg)=>{
     console.log('mocking providing fake data');
     return [200,data];  
   })
-  .onGet('/meta.json').reply((cfg)=>{ 
+  .onGet('meta.json').reply((cfg)=>{ 
     return axios.get('/static/data/meta.json').then((resp)=>{
       meta = resp.data;
       console.log('mocking providing fake metadata');

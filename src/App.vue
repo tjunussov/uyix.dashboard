@@ -139,7 +139,7 @@ export default {
       console.log('Disabling Demo'); 
     }
 
-    this.$http.get('/meta.json').then((resp)=>{
+    this.$http.get('meta.json').then((resp)=>{
       console.log('Metadata loaded',resp.data);
       try {
           if(resp.data.constructor == String) this.$root.meta=JSON.parse(resp.data);
@@ -167,12 +167,12 @@ export default {
       this.mustReload = true;
     },
     'emulateFake'(val){
-      this.$http.get('/fake/'+val).then((resp)=>{
+      this.$http.get('fake/'+val).then((resp)=>{
         console.log('toggleFake',resp.data)
       });
     },
     'masterState'(val){
-      this.$http.get('/master/'+val).then((resp)=>{
+      this.$http.get('master/'+val).then((resp)=>{
         console.log('toggleMaster',resp.data)
       });
     },
@@ -200,7 +200,7 @@ export default {
       location.reload();
     },
     opendDoor(){
-      this.$http.get('/opendoor').then((resp)=>{
+      this.$http.get('opendoor').then((resp)=>{
           console.log(resp);
           this.showDoor = resp.data;
         }).catch(()=>{
@@ -230,7 +230,7 @@ export default {
         this.ws.isOpen = false;
         socket = null;
       } else {
-        this.$http.get('/data.json').then((resp)=>{
+        this.$http.get('data.json').then((resp)=>{
 
           this.$root.data = resp.data
           this.ws.message = resp.data;
