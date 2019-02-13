@@ -3,22 +3,26 @@
   "intercom":"/opendoor",
   "others":{
     "bell":[1,2],
-    "master":false
+    "alarm":[1,7],
+    "master":[1,6]
   },
   "meters":{
-    "Хол-Вода":[3,2]
+    "Хол-Вода":[3,2],
+    "Гор-Вода":[3,3],
+    "Свет":[3,4]
   },
   "rooms":{
       "HALLWAY":{
         "name":"Прихожая",
-        "light":[1,1,1,4],
+        "light":[[1,1,1,4],[1,8]],
         "pir":[2,1],
         "temp":[2,2],
-        "humidity":[2,3]
+        "humidity":[2,3],
+        "reed":[1,5]
       },
       "HALL":{
         "name":"Зал",
-        "disabled":true
+        "light":[1,8]
       },
       "KITCHEN":{
         "name":"Кухня",
@@ -38,7 +42,7 @@
   "slaves":{
     "1":{
       "name":"ПЛК",
-      "regs":["CHANGE","RELAY.LIGHT","RELAY.BELL",null,"SENSOR.HALL.LIGHT"]
+      "regs":["CHANGE","RELAY.LIGHT","RELAY.BELL",null,"SENSOR.HALL.LIGHT","SENSOR.REED","RELAY.MASTER"]
     },
     "2":{
       "name":"Сенсор(Корридор)",

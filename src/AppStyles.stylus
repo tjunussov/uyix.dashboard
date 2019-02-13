@@ -122,7 +122,7 @@
     .card
       flex 1 0 0% !important
       width 11rem !important
-      height 11rem !important
+      height 12rem !important
       margin 0.2rem !important
       opacity 1 !important
       
@@ -133,12 +133,27 @@
         
       .card-body
         padding 0.5em  !important
+        position relative
       
       .display
         font-size 2rem
         line-height 2.1rem
+        pointer-events none
+        z-index 1
+        position relative
         
-      &.toggled
+      .swicthes
+        position absolute
+        width 90%
+        top 0.3rem
+        z-index 0
+        
+        .btn
+          border-radius 0
+          background-color transparent
+          height 4rem
+        
+      &.toggled, .btn.toggled
         outline 1px solid #fbca67 !important
         
       &[disabled]
@@ -153,6 +168,7 @@
         position absolute
         width 100%
         bottom 0.5rem
+        z-index 1
     
   h6
     width: 100%
@@ -263,7 +279,7 @@
       content: '';
       position: absolute;*/
           
-    &.enabled
+    &.enabled, .btn.enabled
       background-color #be924e !important
       opacity 1 !important
       

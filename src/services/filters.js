@@ -104,6 +104,8 @@ function unwrap(v,i,data){
       return (data[v[0]][Math.abs(v[i+1])] == 1) ? 0 : 1;
     else 
       return data[v[0]][Math.abs(v[i+1])];
+  } else if(v && v[i-2]){
+    return unwrap(v,i-2,data)
   } else {
     return null
   }

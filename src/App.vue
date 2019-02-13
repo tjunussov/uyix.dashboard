@@ -10,10 +10,10 @@ doctype html
     b-navbar-brand(@click="showAlert='с 14:00 по 18:00 будут профилактические работы'")
       .logo
       b-badge(v-if="!ws.disableDemo") DEMO
-    b-navbar-brand(@click="$root.toggleFullScreen()").w100 SMARTHOME
+    b-navbar-brand(@click="$root.toggleFullScreen()") SMARTHOME
 
 
-    b-navbar-nav.ml-2(v-if="meta")
+    //- b-navbar-nav.ml-2(v-if="meta")
       b-nav-form
         b-button(v-if="meta.others && meta.others.master != null" size="sm" :variant="masterState?'':'danger'" :pressed.sync="masterState") 
           i.fa.fa-power-off.mr-1/
@@ -114,7 +114,7 @@ export default {
       emulateFake:true,
       masterState:true,
       adaptTemp:false,
-      muteSound:false,
+      muteSound:true,
       mustReload:false,
       ws:{
         isOpen : false,
@@ -141,8 +141,15 @@ export default {
 
     this.$http.get('/meta.json').then((resp)=>{
       console.log('Metadata loaded',resp.data);
-      this.$root.meta=resp.data;
-      if(this.ws.autoconnect) this.toggleConnect();
+      try {
+          if(resp.data.constructor == String) this.$root.meta=JSON.parse(resp.data);
+          else this.$root.meta=resp.data;
+          if(this.ws.autoconnect) this.toggleConnect();
+      } catch (e) {
+          console.error(e);
+          this.showDoor = "meta.json invalid JSON structure!";
+          return false;
+      }
     }).catch(()=>{
       this.showDoor = "No meta.json found on server!";
     });

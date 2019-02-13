@@ -6,19 +6,26 @@ div(v-if="meta")
       b-card-body
         b-row.display.p-2
           b-col(cols="3")
-              b-button.mb-2(
+              b-btn.w100.btn-block.text-left(size="lg" 
+                v-if="meta.others && meta.others.master"
+                :class="{'text-enable':unvalue(meta.others.master)}"
+                @click="sendAction(meta.others.master)")
+                i.fa.fa-power-off.mr-2/
+                | Отключить
+              b-btn.w100.btn-block.text-left(
                 v-if="meta.others && meta.others.bell"
                 size="lg"
-                :class="{'text-enable':unstatus(meta.others.bell)}" 
+                :class="{'text-enable':unstatus(meta.others.bell)}"
                 @click="sendAction(meta.others.bell)")
+                  i.fa.fa-bell-slash.mr-2(v-if="unvalue(meta.others.bell)")
+                  i.fa.fa-bell.mr-2(v-else)
                   | Звонок
-                  i.fa.fa-bell-slash.ml-2(v-if="unvalue(meta.others.bell)")
-                  i.fa.fa-bell.ml-2(v-else)
-              b-btn.text-danger(size="lg" 
-                v-if="meta.others && meta.others.alarm && unvalue(meta.others.alarm)"
-                @click="sendAction(meta.others.alarm)")
+              b-btn.w100.btn-block.text-left(size="lg" variant="outline-secondary" 
+                v-if="meta.others && meta.others.alarm"
+                @click="sendAction(meta.others.alarm)"
+                :class="{'btn-secondary text-danger':unstatus(meta.others.alarm)}")
+                i.fa.fa-bolt.mr-2/
                 | Сирена
-                i.fa.fa-bolt.ml-2/
           b-col(cols="4").w100
               div
                 small Горячяя Вода 
@@ -42,25 +49,46 @@ div(v-if="meta")
 
   b-card-group.uyi.rooms(deck)
 
-    b-card(
-        v-for="(g,k) in meta.rooms"
-         @click="sendAction(g.light)"
-         :key="k"
-         :class="{'enabled':unstatus(g.light),'toggled':unvalue(g.light)}"
-         :disabled="g.disabled"
-         no-body
-         align="center")
-      b-card-header 
-        i.fa.fa-user-secret.mr-1(v-if="unvalue(g.pir)")
-        | {{g.name}}
-      b-card-body
-        .display.pt-3
-          .temp(v-if="g.temp") {{unvalue(g.temp) | numeric}}
-          .humidity(v-if="g.humidity") {{unvalue(g.humidity)}}
-          .sensors.text-center
-            i.fa.fa-fire.text-danger.mr-1(v-if="unvalue(g.fire)")/
-            i.fa.fa-tint.text-danger.mr-1(v-if="unvalue(g.leak)")/
-            i.fa.fa-ban.text-danger.mr-1(v-if="unstatus(g.valve)")/
+    template(v-for="(g,k) in meta.rooms")
+      template(v-if="g.light && Array.isArray(g.light[0])")
+        b-card(:disabled="g.disabled" no-body align="center")
+          b-card-header 
+            i.fa.fa-user-secret.mr-1(v-if="unvalue(g.pir)")
+            i.fa.fa-folder-open-o.mr-1(v-if="unvalue(g.reed)")
+            | {{g.name}}
+          b-card-body
+            .display.pt-3
+              .temp(v-if="g.temp") {{unvalue(g.temp) | numeric}}
+              .humidity(v-if="g.humidity") {{unvalue(g.humidity)}}
+            .sensors.text-center
+              i.fa.fa-fire.text-danger.mr-1(v-if="unvalue(g.fire)")/
+              i.fa.fa-tint.text-danger.mr-1(v-if="unvalue(g.leak)")/
+              i.fa.fa-ban.text-danger.mr-1(v-if="unstatus(g.valve)")/
+            .swicthes
+              b-btn.btn-block(size="lg" 
+                :key="i"
+                @click="sendAction(gg)"
+                v-for="(gg,i) in g.light"
+                :class="{'enabled':unstatus(gg),'toggled':unvalue(gg)}")
+
+      template(v-else)
+        b-card(@click="sendAction(g.light)"
+             :class="{'enabled':unstatus(g.light),'toggled':unvalue(g.light)}"
+             :disabled="g.disabled"
+             no-body
+             align="center")
+          b-card-header 
+            i.fa.fa-user-secret.mr-1(v-if="unvalue(g.pir)")
+            i.fa.fa-folder-open-o.mr-1(v-if="unvalue(g.reed)")
+            | {{g.name}}
+          b-card-body
+            .display.pt-3
+              .temp(v-if="g.temp") {{unvalue(g.temp) | numeric}}
+              .humidity(v-if="g.humidity") {{unvalue(g.humidity)}}
+            .sensors.text-center
+              i.fa.fa-fire.text-danger.mr-1(v-if="unvalue(g.fire)")/
+              i.fa.fa-tint.text-danger.mr-1(v-if="unvalue(g.leak)")/
+              i.fa.fa-ban.text-danger.mr-1(v-if="unstatus(g.valve)")/
    
 
 </template>
