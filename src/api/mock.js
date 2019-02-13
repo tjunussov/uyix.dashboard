@@ -25,7 +25,7 @@ if(localStorage.getItem('disableDemo') !== 'true'){
     return [200,data];  
   })
   .onGet('meta.json').reply((cfg)=>{ 
-    return axios.get('/static/data/meta.json').then((resp)=>{
+    return axios.get('static/data/meta.json').then((resp)=>{
       meta = resp.data;
       console.log('mocking providing fake metadata');
       return [200,meta];  
