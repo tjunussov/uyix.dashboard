@@ -12,6 +12,12 @@ div(v-if="meta")
                 @click="sendAction(meta.others.master)")
                 i.fa.fa-power-off.mr-2/
                 | Отключить
+              b-btn.w100.btn-block.text-left(size="lg" 
+                v-if="meta.others && meta.others.door"
+                :class="{'text-enable':unvalue(meta.others.door)}"
+                @click="sendAction(meta.others.door)")
+                i.fa.fa-lock.mr-2/
+                | Замок
               b-btn.w100.btn-block.text-left(
                 v-if="meta.others && meta.others.bell"
                 size="lg"
@@ -57,7 +63,7 @@ div(v-if="meta")
             i.fa.fa-folder-open-o.mr-1(v-if="unvalue(g.reed)")
             | {{g.name}}
           b-card-body
-            .display.pt-3
+            .display.pt-3.disable-events
               .temp(v-if="g.temp") {{unvalue(g.temp) | numeric}}
               .humidity(v-if="g.humidity") {{unvalue(g.humidity)}}
             .sensors.text-center

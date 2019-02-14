@@ -41,6 +41,11 @@ homebridge 2>&1
 - [x] others.turn-off: master off добавить
 - [x] hallway.reed добавить
 - [x] light1, light2 support добавить
+- [ ] door
+- [ ] door warning open
+- [ ] master off count down + sound
+- [ ] master on, off sound
+- [ ] reed sound
 - [ ] ir suport ?
 
 ## IMPROVEMENT 

@@ -138,9 +138,12 @@
       .display
         font-size 2rem
         line-height 2.1rem
-        pointer-events none
         z-index 1
         position relative
+        
+
+      .disable-events
+        pointer-events none
         
       .swicthes
         position absolute

@@ -4,7 +4,9 @@
   "others":{
     "bell":[1,2],
     "alarm":[1,7],
-    "master":[1,6]
+    "master":[1,6],
+    "door":[1,20],
+    "doorwarning":[1,21]
   },
   "meters":{
     "Хол-Вода":[3,2],
@@ -42,7 +44,7 @@
   "slaves":{
     "1":{
       "name":"ПЛК",
-      "regs":["CHANGE","RELAY.LIGHT","RELAY.BELL",null,"SENSOR.HALL.LIGHT","SENSOR.REED","RELAY.MASTER"]
+      "regs":["CHANGE","RELAY.LIGHT","RELAY.BELL",null,"SENSOR.HALL.LIGHT","SENSOR.REED","RELAY.MASTER","RELAY.DOOR","SENSOR.DOORWARNING"]
     },
     "2":{
       "name":"Сенсор(Корридор)",
