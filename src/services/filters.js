@@ -57,15 +57,38 @@ Vue.filter('adjuster', function (value,type,enabled) {
   return value;
 })
 
-var powerValue = null;
-var powerCnt = 0;
 
-var coldValue = null;
-var coldCnt = 0;
+Vue.filter('unwrapMoney', function (value,data,type,meta) {
 
-var hotValue = null;
-var hotCnt = 0;
+  if(value == null) return '-';
+  var total = convert(value,data);
+  var tarif = 1
+  if(meta){
+    tarif = meta.metersConfig?meta.metersConfig.tariff:1;
+  }
 
+  switch(type){
+     case 'power': return total.toFixed(3)+' kW' + ' ('+(total*tarif[type]).toFixed(0)+'₸)';
+     default: return total.toFixed(3)+' m3' + ' ('+(total*tarif[type]).toFixed(0)+'₸)';
+  }
+})
+
+
+Vue.filter('money', function (total,type,meta) {
+
+  if(total == null) return '-';
+  var tarif = 1
+  if(meta){
+    tarif = meta.metersConfig?meta.metersConfig.tariff:1;
+  }
+
+  switch(type){
+     case 'power': return total.toFixed(3)+' kW' + ' ('+(total*tarif[type]).toFixed(0)+'₸)';
+     default: return total.toFixed(3)+' m3' + ' ('+(total*tarif[type]).toFixed(0)+'₸)';
+  }
+})
+
+/*
 Vue.filter('money', function (value,type) {
   if(value == null) return '-';
   if(type == 'cold'){
@@ -91,25 +114,37 @@ Vue.filter('money', function (value,type) {
   } 
   return value
 })
-
+*/
 
 Vue.filter('unwrap', function (value,data) {
   return unwrap(value,0,data);
 })
 
-function unwrap(v,i,data){
-  if(!data) return null;
-  if(v && v[i] && data[v[i]] && data[v[i]][Math.abs(v[i+1])] != null){
-    if(v[i+1] < 0) // Проверка на инвертированные значения
-      return (data[v[0]][Math.abs(v[i+1])] == 1) ? 0 : 1;
-    else 
-      return data[v[0]][Math.abs(v[i+1])];
-  } else if(v && v[i-2]){
-    return unwrap(v,i-2,data)
-  } else {
-    return null
-  }
+function convert(value,data){
+  if(value)
+    return (unwrap(value,0,data) / (value.weight?value.weight:1));
+}
 
+function unwrap(v,i,data){
+
+  if(!data) return null;
+  if(!v) return null;
+
+  if(Array.isArray(v)){
+
+    if(v[i] && data[v[i]] && data[v[i]][Math.abs(v[i+1])] != null){
+      if(v[i+1] < 0) // Проверка на инвертированные значения
+        return (data[v[0]][Math.abs(v[i+1])] == 1) ? 0 : 1;
+      else 
+        return data[v[0]][Math.abs(v[i+1])];
+    } else if(v[i-2]){
+      return unwrap(v,i-2,data)
+    }
+
+  } else { // if value object
+    return unwrap(v.value,0,data)+(v.offset?v.offset:0);
+  }
 }
 
 window.unwrap = unwrap;
+window.convert = convert;

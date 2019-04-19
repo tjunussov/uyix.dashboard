@@ -33,6 +33,9 @@ doctype html
       b-nav-item(to="/list") 
         span(:class="{'text-success':!isRooms,'text-muted':isRooms}") 
           i.fa.fa-th/
+      b-nav-item(to="/meter") 
+        span(:class="{'text-success':!isRooms,'text-muted':isRooms}") 
+          i.fa.fa-compass/
       b-nav-item(v-b-modal.communicate) 
         span(:class="{'text-success':ws.isOpen,'text-muted':!ws.isOpen}") 
           i.fa.fa-gear/

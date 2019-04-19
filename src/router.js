@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import Settings from '@/components/Settings'
 import Home from '@/components/Home'
+import Meter from '@/components/Meter'
 import List from '@/components/List'
 
 
@@ -17,6 +18,11 @@ const router =  new Router({
     {
       path: '/home',
       component: Home,
+      meta: { isPublic: true }
+    },
+    {
+      path: '/meter',
+      component: Meter,
       meta: { isPublic: true }
     },
     {

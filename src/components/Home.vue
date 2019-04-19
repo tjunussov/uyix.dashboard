@@ -43,11 +43,11 @@ div(v-if="meta")
                 small Погода
           b-col(cols="5")
               div
-                span.mr-2 {{meta.meters['Гор-Вода'] | unwrap(data) | money('hot')}}
+                span.mr-2 {{sum(meta.meters,'hot') | money('hot',meta) }}
               div
-                span.mr-2 {{meta.meters['Хол-Вода'] | unwrap(data) | money('cold')}}
+                span.mr-2 {{sum(meta.meters,'cold') | money('cold',meta) }}
               div
-                span.mr-2 {{meta.meters['Свет'] | unwrap(data) | money('power')}}
+                span.mr-2 {{sum(meta.meters,'power') | money('power',meta)}}
               div(v-if="weather")
                 small.mr-2: i.fa.fa-snowflake-o
                 span.mrs-2 {{weather.main.temp}}° 
@@ -71,7 +71,7 @@ div(v-if="meta")
               i.fa.fa-tint.text-danger.mr-1(v-if="unvalue(g.leak)")/
               i.fa.fa-ban.text-danger.mr-1(v-if="unstatus(g.valve)")/
             .swicthes
-              b-btn.btn-block(size="lg" 
+              b-btn.btn-block.full-height(size="lg" 
                 :key="i"
                 @click="sendAction(gg)"
                 v-for="(gg,i) in g.light"
@@ -118,6 +118,14 @@ export default {
     },
     unvalue(){
       return (v) => window.unwrap(v,0,this.data)
+    },
+    sum(){
+      return (v,t) => {
+        return Object.values(v).reduce((l,c)=>{
+          var w = window.unwrap(c[t],0,this.data);
+          return l + w?w:0;
+        },0)
+      }
     },
     meta(){
       return this.$root.meta;

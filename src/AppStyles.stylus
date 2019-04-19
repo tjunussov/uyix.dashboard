@@ -154,7 +154,9 @@
         .btn
           border-radius 0
           background-color transparent
-          height 4rem
+          
+          &.full-height
+            height 4rem
         
       &.toggled, .btn.toggled
         outline 1px solid #fbca67 !important

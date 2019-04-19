@@ -11,7 +11,7 @@ b-card-group.uyi.devices(deck v-if="data && meta")
        Zmousedown="down([s,r])"
        Zmouseup="up([s,r])"
        align="center")
-      b-card-header {{(reg)}}
+      b-card-header {{bus.name}} {{reg}} 
       b-card-body(:data-newvalue="unvalue([s,r])")
         transition(:name="reg.includes('METER')?'slide-fade':(reg.includes('RELAY')?'chuh':'blink')" :duration="{ enter: 500}" @leave="leave" @enter="enter" mode="out-in")
           h4.card-title.meters(v-if="reg.includes('METER')" :key="unvalue([s,r])")

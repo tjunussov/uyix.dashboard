@@ -8,51 +8,45 @@
     "door":[1,20],
     "doorwarning":[1,21]
   },
-  "meters":{
-    "Хол-Вода":[3,2],
-    "Гор-Вода":[3,3],
-    "Свет":[3,4]
+  "metersConfig":{
+    "tariff":{
+      "hot":140.01,
+      "cold":41.59,
+      "power": 11.57
+    }
   },
-  "rooms":{
-      "HALLWAY":{
-        "name":"Прихожая",
-        "light":[[1,1,1,4],[1,8]],
-        "pir":[2,1],
-        "temp":[2,2],
-        "humidity":[2,3],
-        "reed":[1,5]
-      },
-      "HALL":{
-        "name":"Зал",
-        "light":[1,8]
-      },
-      "KITCHEN":{
-        "name":"Кухня",
-        "disabled":true
-      },
-      "BATHROOM":{
-        "name":"Сан-узел",
-        "disabled":true,
-        "leak":[3,-1],
-        "valve":[3,3,3,4]
-      },
-      "WARDROBE":{
-        "name":"Кладовая",
-        "disabled":true
-      }
+  "meters":{
+    "BOLID":{
+      "hot":{"value":[1,2],"offset":10,"weight":1000},
+      "cold":{"value":[1,5],"offset":200,"weight":1000}
+    },
+    "METERY":{
+      "hot":{"value":[2,0],"offset":10,"weight":1000},
+      "cold":{"value":[2,1],"offset":10,"weight":1000}
+    },
+    "CHRONOS":{
+      "hot":{"value":[3,0],"offset":10,"weight":1000},
+      "cold":{"value":[3,2],"offset":10,"weight":1000},
+      "power":{"value":[3,4],"offset":10,"weight":3200}
+    },
+    "GERKON20":{
+      "hot":{"value":[3,0],"offset":10,"weight":1000},
+      "cold":{"value":[3,2],"offset":10,"weight":1000},
+      "power":{"value":[3,4],"offset":10,"weight":3200}
+    }
   },
   "slaves":{
     "1":{
-      "name":"ПЛК",
-      "regs":["CHANGE","RELAY.LIGHT","RELAY.BELL",null,"SENSOR.HALL.LIGHT","SENSOR.REED","RELAY.MASTER","RELAY.DOOR","SENSOR.DOORWARNING"]
+      "name":"BOLID",
+      "regs":["REG1Z1","REG2Z1","HOT","REG1Z2","REG1Z2","COLD"]
     },
     "2":{
-      "name":"Сенсор(Корридор)",
-      "regs":["CHANGE","SENSOR.PIR.MOTION","SENSOR.TEMP","SENSOR.HUMIDITY"]
+      "name":"METERY",
+      "regs":["HOT","COLD"]
     },
     "3":{
-      "name":"Сенсор(Ванная)",
-      "regs":["CHANGE","SENSOR.LEAK","METER.COLD","RELAY.VALVE","SENSOR.VALVE"]
+      "name":"CHRONOS",
+      "regs":["HOT",null,"COLD",null,"POWER",null]
     }
   }
 }
