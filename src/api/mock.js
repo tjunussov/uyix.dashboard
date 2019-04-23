@@ -84,7 +84,7 @@ function demo(socket){
 
       var _json = {};
       _json[randSlave] = regs;
-      _json[randSlave][randReg] = regs[randReg] > 1 ? random(10,100) : random(0,1) ;
+      _json[randSlave][randReg] = regs[randReg] > 1 ? regs[randReg]++ : random(0,1) ;
 
 
       // console.log("mock socket _json",_json);

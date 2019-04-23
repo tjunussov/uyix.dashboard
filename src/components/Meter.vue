@@ -1,47 +1,42 @@
 <template lang="pug">
 div(v-if="meta")
-  b-card-group.uyi.rooms.main(deck)
 
-    //- b-card(no-body)
-      b-card-body
-        b-row.display.p-2
-          b-col(cols="4").w100
-              div
-                small Горячяя Вода 
-              div
-                small Холодная Вода 
-              div
-                small Электроэнергия
-              div
-                small Погода
-          b-col(cols="5")
-              div
-                span.mr-2 {{meta.meters['hot'] | unwrapMoney(data,'hot',meta) }}
-              div
-                span.mr-2 {{meta.meters['cold'] | unwrapMoney(data,'cold',meta) }}
-              div
-                span.mr-2 {{meta.meters['power'] | unwrapMoney(data,'power',meta) }}
-              div(v-if="weather")
-                small.mr-2: i.fa.fa-snowflake-o
-                span.mrs-2 {{weather.main.temp}}° 
-                small {{weather.weather[0].description}}
+
+  b-card-group.uyi.rooms.meters(deck)
+    template(v-for="(m,k,i) in meta.meters" v-if="k == selected")
+      b-card.active(no-body align="center")
+        b-card-body
+
+          b-card-group.meters-body(deck)
+            b-card(no-body align="center")
+              b-card-body.hot(v-if="m['hot']") 
+                div ХВС 
+                | {{m['hot'] | unwrapMoney(data,'hot',meta)}}
+            b-card(no-body align="center")
+              b-card-body.cold(v-if="m['cold']")  
+                div ГВС 
+                | {{m['cold'] | unwrapMoney(data,'cold',meta)}}
+            b-card(no-body align="center")
+              b-card-body.pow(v-if="m['power']") 
+                div ЭЛ 
+                | {{m['power'] | unwrapMoney(data,'power',meta)}}
 
   b-card-group.uyi.rooms(deck)
 
-    template(v-for="(m,k) in meta.meters")
-        b-card(:disabled="m.disabled" no-body align="center")
-          b-card-header 
+    template(v-for="(m,k,i) in meta.meters")
+        b-card(:class="{active:selected == k}" :disabled="m.disabled" no-body align="center" )
+          b-card-header(@click.stop="meterNo = i")
             | {{k}}
           b-card-body
             .swicthes
-              b-btn.btn-block.cold(@click="edit(m['hot'])" v-if="m['hot']" v-b-modal="'meteredit'")
+              b-btn.btn-block.hot(@click.stop="edit(m['hot'])" v-if="m['hot']" v-b-modal="'meteredit'")
                 | {{m['hot'] | unwrapMoney(data,'hot',meta)}}
-              b-btn.btn-block.hot(@click="edit(m['cold'])" v-if="m['cold']" v-b-modal="'meteredit'") 
+              b-btn.btn-block.cold(@click.stop="edit(m['cold'])" v-if="m['cold']" v-b-modal="'meteredit'") 
                 | {{m['cold'] | unwrapMoney(data,'cold',meta)}}
-              b-btn.btn-block.pow(@click="edit(m['power'])" v-if="m['power']" v-b-modal="'meteredit'")
+              b-btn.btn-block.pow(@click.stop="edit(m['power'])" v-if="m['power']" v-b-modal="'meteredit'")
                 | {{m['power'] | unwrapMoney(data,'power',meta)}}
 
-  b-modal#meteredit(title="Уставка" size="sm" @ok="save" @hide="newVal=null" :ok-disabled="isOk")
+  b-modal#meteredit(title="Уставка" size="sm" @ok="saveMeta" @hide="newVal=null" Zok-disabled="isOk")
     //- div {{meta.metersConfig.tariff}}
     //- div {{newVal}}
     b-form-group
@@ -65,8 +60,16 @@ export default {
       newVal:null,
       newVal1:null,
       newVal2:null,
+      interval:null,
+      meterNo:0,
       home:{}
     }
+  },
+  created(){
+    this.interval = window.setInterval(()=>{ this.meterNo++ },10000);
+  },
+  beforeDestroy(){
+    window.clearInterval(this.interval);
   },
   computed:{
     isOk(){
@@ -77,6 +80,9 @@ export default {
         }
       }
       return true;
+    },
+    selected(){
+      return Object.keys(this.meta.meters)[this.meterNo % Object.keys(this.meta.meters).length]
     },
     newVal3(){
       if(this.newVal1 && this.newVal2)
@@ -102,27 +108,59 @@ export default {
       return this.$root.weather;
     },
   },
+  components:{Pass},
   methods:{
     edit(m){
       this.current = m;
     },
-    save(){
+    saveMeta(){
       this.current.offset = this.newVal - this.unwrap(this.current)  + this.current.offset;
-      console.log('saved',this.newVal,this.current);
+      console.log('sendMeta',this.newVal,this.current);
+
+      this.$http.post('meta.json',this.meta).then(()=>{
+        console.log('meta saved');        
+      }).catch((e)=>{
+        console.error('saveMeta with error',e);
+      // this.toggleError(group,key,val);
+      });
     }
   },
   mixins: [actionMixin]
 }
 
 
+const Pass = { 
+  render() {
+    return this.$scopedSlots.default(this.$attrs)
+  }
+}
+
 
 </script>
 
 <style lang="stylus">
 .hot 
-  color red
+  color red !important
 .cold 
-  color #00a2ff
+  color #00a2ff !important
 .pow
-  color #ffd800
+  color #ffd800 !important
+  
+
+.uyi.rooms.meters .card
+  height 13.1rem !important
+    
+.uyi.rooms .meters-body .card
+  height 11.5rem !important
+  border-radius  100%
+  margin-right 2.2rem !important
+  margin-left 2.2rem !important
+  padding-top 1rem
+  font-size 2rem
+  line-height 2.2rem
+  letter-spacing -1px
+  background-color rgba(0,0,0,0.1) !important
+  border 1px solid #ffffff66  !important
+  color #000 !important
+    
 </style>

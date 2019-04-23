@@ -17,20 +17,20 @@
   },
   "meters":{
     "BOLID":{
-      "hot":{"value":[1,2],"offset":10,"weight":1000},
+      "hot":{"value":[1,2],"offset":10,"weight":100,"display_offset":0.005},
       "cold":{"value":[1,5],"offset":200,"weight":1000}
     },
     "METERY":{
-      "hot":{"value":[2,0],"offset":10,"weight":1000},
+      "hot":{"value":[2,0],"offset":10,"weight":100,"display_offset":0.005},
       "cold":{"value":[2,1],"offset":10,"weight":1000}
     },
     "CHRONOS":{
-      "hot":{"value":[3,0],"offset":10,"weight":1000},
+      "hot":{"value":[3,0],"offset":10,"weight":100,"display_offset":0.005},
       "cold":{"value":[3,2],"offset":10,"weight":1000},
       "power":{"value":[3,4],"offset":10,"weight":3200}
     },
     "GERKON20":{
-      "hot":{"value":[3,0],"offset":10,"weight":1000},
+      "hot":{"value":[3,0],"offset":10,"weight":100,"display_offset":0.005},
       "cold":{"value":[3,2],"offset":10,"weight":1000},
       "power":{"value":[3,4],"offset":10,"weight":3200}
     }

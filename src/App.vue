@@ -65,7 +65,7 @@ doctype html
           b-form-checkbox(v-model="ws.autoconnect")
       b-row.mt-3
         b-col
-          b-form-group(label="Hide Fake")
+          b-form-group(label="Hide Fake, Emulate Fake")
             b-form-checkbox(v-model="hideFake")
             b-form-checkbox(v-model="emulateFake")
         b-col
@@ -114,7 +114,7 @@ export default {
       showDoor:null,
       showAlert:null,
       hideFake:false,
-      emulateFake:true,
+      emulateFake:false,
       masterState:true,
       adaptTemp:false,
       muteSound:true,

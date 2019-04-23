@@ -68,8 +68,12 @@ Vue.filter('unwrapMoney', function (value,data,type,meta) {
   }
 
   switch(type){
-     case 'power': return total.toFixed(3)+' kW' + ' ('+(total*tarif[type]).toFixed(0)+'₸)';
-     default: return total.toFixed(3)+' m3' + ' ('+(total*tarif[type]).toFixed(0)+'₸)';
+     case 'power': 
+     if(value.display_offset) total = total + value.display_offset;
+     return total.toFixed(2) + ' kW' + ' ('+(total*tarif[type]).toFixed(0)+'₸)';
+     default: 
+     if(value.display_offset) total = total + value.display_offset;
+     return total.toFixed(3)+' m3' + ' ('+(total*tarif[type]).toFixed(0)+'₸)';
   }
 })
 
@@ -122,7 +126,7 @@ Vue.filter('unwrap', function (value,data) {
 
 function convert(value,data){
   if(value)
-    return (unwrap(value,0,data) / (value.weight?value.weight:1));
+    return (unwrap(value,0,data)) / (value.weight?value.weight:1);
 }
 
 function unwrap(v,i,data){
@@ -143,6 +147,7 @@ function unwrap(v,i,data){
 
   } else { // if value object
     return unwrap(v.value,0,data)+(v.offset?v.offset:0);
+    // return unwrap(v.value,0,data);
   }
 }
 

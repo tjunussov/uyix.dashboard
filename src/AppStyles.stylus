@@ -203,7 +203,7 @@
     transition  background 0.2s ease-out, color 0.2s ease-out, border-color 0.5s ease-out !important
     
 
-    &:hover
+    &:hover, &.active
       outline 1px solid #fbca67 !important
       
 
