@@ -1,16 +1,13 @@
 <template lang="pug">
 div(v-if="meta")
-
-
   b-card-group.uyi.rooms.meters(deck)
-    template(v-for="(m,k,i) in meta.meters" v-if="k == selected")
-      b-card.active(no-body align="center")
+    pass(v-for="(m,k,i) in meta.meters" v-if="k == selected" :key="k" :meta="getUserData(m)")
+      b-card.active(no-body align="center" slot-scope="{ meta }")
         b-card-body
-
           b-card-group.meters-body(deck)
             b-card(no-body align="center")
               b-card-body.hot(v-if="m['hot']") 
-                div ХВС 
+                div ХВС {{meta.value}} m3 {{meta.money}} ₸
                 | {{m['hot'] | unwrapMoney(data,'hot',meta)}}
             b-card(no-body align="center")
               b-card-body.cold(v-if="m['cold']")  
@@ -51,6 +48,11 @@ div(v-if="meta")
 import Vue from 'vue'
 import actionMixin from '@/services/actionMixin'
 
+Vue.component('pass', {
+  render() {
+    return this.$scopedSlots.default(this.$attrs)
+  }
+});
 
 export default {
   name: 'Home',
@@ -108,7 +110,6 @@ export default {
       return this.$root.weather;
     },
   },
-  components:{Pass},
   methods:{
     edit(m){
       this.current = m;
@@ -123,17 +124,17 @@ export default {
         console.error('saveMeta with error',e);
       // this.toggleError(group,key,val);
       });
+    },
+    getUserData(data){
+      return {value:10,money:10}
+
     }
   },
   mixins: [actionMixin]
 }
 
 
-const Pass = { 
-  render() {
-    return this.$scopedSlots.default(this.$attrs)
-  }
-}
+
 
 
 </script>
